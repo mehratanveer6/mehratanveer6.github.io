@@ -1,0 +1,50 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Keyword Analyzer</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Twitter Keyword Analyzer</h1>
+    <form id="analyze-form">
+        <input type="text" id="username" placeholder="Enter Twitter username" required>
+        <button type="submit">Analyze</button>
+    </form>
+    <canvas id="keywordChart" width="800" height="400"></canvas>
+
+    <script>
+        $(document).ready(function() {
+            $('#analyze-form').submit(function(e) {
+                e.preventDefault();
+                const username = $('#username').val();
+                
+                $.post('/analyze', {username: username}, function(data) {
+                    const ctx = document.getElementById('keywordChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: Object.keys(data),
+                            datasets: [{
+                                label: 'Keyword Frequency',
+                                data: Object.values(data),
+                                backgroundColor: 'rgba(75, 192, 192, 0.6)'
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
